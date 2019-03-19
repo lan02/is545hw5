@@ -1,71 +1,34 @@
-//const output = document.getElementById('output')
-
-//function showkeyInfo (e) {
-    //const msg = `Type: ${e.type} Code: ${e.keyCode}`
-    //output.innerHTML += `<p>${msg}</p>`
-//}
-
-//document.addEventListener("keyup", event => {
-    //if(event.key === "+")
-//})
-
-//document.addEventListener("keydown", event => {
-    //if(event.key === "-")
-//})
-
-function getSizeValue(valueWithUnit, unit) {
-	return parseInt(valueWithUnit.split(unit)[0]);
+let balloon = document.getElementById("balloon");
+let size;
+function setSize(newSize) {
+  size = newSize;
+  balloon.style.fontSize = size + "px";
+  console.log(size + 'px');
 }
-
-function balloon(event) {
-	// if (event.defaultPrevented) {
-	//   return; // Do nothing if the event was already processed
-	// }
-	switch (event.keyCode) {
-		case 189:
-			changeSize('.balloon', 1.1,'down');
-			break;
-		case 187:
-			changeSize('.balloon', 1.1);
-			break;
-		default:
-			return; // Quit when this doesn't handle the key event.
+setSize(30);
+function sizeChange(event) {
+  if (event.key === "+") {
+	if (size >= 60) {
+	  console.log('Boom!');
+	  balloon.innerHTML = "💥";
+	  document.body.removeEventListener("keyup", sizeChange);
+	} else {
+	  setSize(size + 15);
+	  event.preventDefault();
 	}
-
-	// Cancel the default action to avoid it being handled twice
-	// event.preventDefault();
+  } else if (event.key === "-") {
+	if (size <= 0) {
+	  console.log('Done!');
+	  let span = document.createElement('span');
+	  span.style.fontSize = "20px";
+	  let bDone = document.createTextNode("Done");
+	  span.appendChild(bDone);
+	  balloon.appendChild(span);
+	  document.body.removeEventListener("keyup", sizeChange);
+	} else {
+	  setSize(size - 15);
+	  event.preventDefault();
+	}
+  }
 }
-
-
-
-// element = 'string'
-// amount = int
-// direction '' or down
-function changeSize(element, amount, direction) {
-	element = document.querySelector(element);
-	let elementSize = window.getComputedStyle(element).fontSize;
-	let elementSizeValue = getSizeValue(elementSize, 'px');
-
-	if (direction === undefined) {
-		elementSizeValue *= amount;
-	} else elementSizeValue /= amount;
-
-	if (elementSizeValue <= 60) {
-		console.log(elementSize);
-		elementSize = Math.ceil(elementSizeValue) + 'px';
-		element.style.fontSize = elementSize;
-    } else boom(element);
-    
-    //if (elementSizeValue <= 0) {
-		//console.log(elementSize);
-		//elementSize = "Done";
-	//} else boom(element);
-}
-
-function boom(element) {
-	element.firstChild.nodeValue = '💥';
-	document.removeEventListener('keydown', balloon, true);
-}
-
-document.addEventListener('keydown', balloon, true);
-
+document.body.addEventListener("keyup", sizeChange);
